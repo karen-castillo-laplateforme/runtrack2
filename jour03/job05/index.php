@@ -1,5 +1,6 @@
 <?php
-$str = "On n’est pas le meilleur quand on le croit mais quand on le sait.";
+$string = "On n’est pas le meilleur quand on le croit mais quand on le sait.";
+$str = strtolower($string);
 
 $dic = [
   "voyelles" => ["a", "e", "i", "o","u","y"],
@@ -25,6 +26,7 @@ while (isset($str[$i]) && $str[$i] !== "") {
 
   $i++;
 }
+var_dump($voyelles);
 ?>
 
 <table>
