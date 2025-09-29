@@ -26,7 +26,6 @@ while (isset($str[$i]) && $str[$i] !== "") {
 
   $i++;
 }
-var_dump($voyelles);
 ?>
 
 <table>
