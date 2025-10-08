@@ -54,10 +54,14 @@ function plateforme($str){
 }
 
 // //Traitement
-$fonction = $_POST["fonction"];
-$input = $_POST["str"];
+$fonction = null;
+$input = null;
 
-if($fonction === "gras"){
+if($_SERVER["REQUEST_METHOD"] === "POST"){
+  $fonction = $_POST["fonction"] ?? null;
+  $input = $_POST["str"] ?? null;
+
+  if($fonction === "gras"){
   gras($input);
 }
 
@@ -68,6 +72,10 @@ if($fonction === "cesar"){
 if($fonction === "plateforme"){
   plateforme($input);
 }
+}
+
+
+
 
 var_dump($_POST);
 ?>
