@@ -1,0 +1,1 @@
+SELECT prenom, nom, naissance FROM etudiants WHERE YEAR(DATE(naissance)) BETWEEN 1998 AND 2018;
