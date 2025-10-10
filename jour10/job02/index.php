@@ -1,10 +1,13 @@
 <?php
-
-
 /* Fonction Query  */
 function db_query($cmd){
   $connexion = mysqli_connect('localhost', 'root');
-  $db = mysqli_select_db($connexion, "jour09");  
+  $db = mysqli_select_db($connexion, "jour09");
+  
+  if(!$connexion){
+    die("Erreur de connexion à la BDD : " . mysqli_connect_error());
+  }
+  
   $db_request = mysqli_query($connexion, $cmd);
 
   if (!$db_request){
@@ -12,6 +15,9 @@ function db_query($cmd){
   }
 
   $db_result = mysqli_fetch_all($db_request, MYSQLI_ASSOC);
+
+  mysqli_free_result($db_request); //Pour libérer de la mémoire
+  mysqli_close($connexion);// Pour fermer la connexion à la bdd
 
   return $db_result;
 }
