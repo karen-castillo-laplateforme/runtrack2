@@ -25,6 +25,9 @@ foreach($all_fields as $f){
 
 /* Récup data des colonnes */
 $salles = mysqli_fetch_all($db_request, MYSQLI_ASSOC);
+
+mysql_free_result($db_request);
+mysqli_close($connexion);
 ?>
 
 <!DOCTYPE html>
