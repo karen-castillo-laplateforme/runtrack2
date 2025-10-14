@@ -6,9 +6,8 @@ if(!$connexion){
   die("Connexion échouée : " . $connexion);
 }
 
-$request = "SELECT *
-FROM salles
-ORDER BY capacite ASC";
+$request = "SELECT salles.nom as 'Salle', etages.nom as 'Etage' FROM salles
+LEFT JOIN etages ON etages.id = id_etage;";
 
 $db_request = mysqli_query($connexion, $request);
 
@@ -49,10 +48,8 @@ mysqli_close($connexion);
     <tbody>
       <?php foreach($salles as $s):?>
         <tr>
-          <td><?= $s["id"] ?></td>
-          <td><?= $s["nom"]?></td>
-          <td><?= $s["id_etage"]?></td>
-          <td><?= $s["capacite"]?></td>
+          <td><?= $s["Salle"] ?></td>
+          <td><?= $s["Etage"] ?></td>
         </tr>
       <?php endforeach; ?>   
     </tbody>
