@@ -45,7 +45,15 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
       $_SESSION["prenom"] = $db_prenom;
       $_SESSION["nom"] = $db_nom;
       $_SESSION["id"] = $db_id;
-      header("Location: profil.php");
+
+      if($db_login === "admin" && $db_nom === "admin" && $db_prenom === "admin"){
+        header("Location: admin.php");
+        exit;
+      }
+
+        header("Location: profil.php");
+        exit;
+
     } else {
       $_SESSION["erreur"] = "Mot de passe incorrect";
       header("Location: connexion.php"); 

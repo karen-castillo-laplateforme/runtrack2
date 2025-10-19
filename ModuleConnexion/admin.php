@@ -1,3 +1,50 @@
+<?php
+session_start();
+
+// 1️⃣ Connexion à la base
+$connexion_db = mysqli_connect('localhost', 'root', '', 'moduleconnexion');
+if(!$connexion_db){
+  die("Connexion à la BDD a échouée" . mysqli_connect_error());
+}
+
+// 2️⃣ Préparer la requête
+$sql = "SELECT id, nom, prenom, login FROM utilisateurs";
+
+$stmt = mysqli_prepare($connexion_db, $sql);
+
+if(!$stmt){
+  die("Erreur de préparation" . mysqli_error($connexion_db));
+}
+
+// 3️⃣ Exécuter la requête
+if(!mysqli_stmt_execute($stmt)){
+  die("Erreur d'exécution : " . mysqli_stmt_error($stmt))
+}
+
+// 4️⃣ Récupérer le résultat
+$result = mysqli_stmt_get_result($stmt);
+if (!$result) {
+    die("Erreur lors de la récupération du résultat : " . mysqli_error($connexion_db));
+}
+
+// 5️⃣ Lire les données
+$users = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+// 6️⃣ Libérer et fermer
+mysqli_free_result($result);
+mysqli_stmt_close($stmt);
+mysqli_close($connexion_db);
+
+//Gestion logout
+  if(isset($_POST["logout"])){
+    session_unset();
+    session_destroy();
+    header("Location: index.php");
+    exit;
+  } 
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,13 +61,21 @@
                 <th>Nom</th>
                 <th>Prénom</th>
                 <th>Login</th>
-                <th>Email</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Les lignes d'utilisateurs seront générées dynamiquement -->
+          <?php foreach($users as $u): ?>
+            <tr>
+              <td><?= htmlspecialschars($u["id"]) ?></td>
+              <td><?= htmlspecialschars($u["nom"]) ?></td>
+              <td><?= htmlspecialschars($u["prenom"]) ?></td>
+              <td><?= htmlspecialschars($u["login"]) ?></td>
+            </tr>
+          <?php endforeach; ?>
         </tbody>
     </table>
-    <p><a href="profil.php">Retour au profil</a></p>
+    <form action="admin.php" method = "POST">
+    <button type="submit" name = "logout">Se déconnecter</button>
+    </form>
 </body>
 </html>
