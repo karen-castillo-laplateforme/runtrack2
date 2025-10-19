@@ -18,7 +18,7 @@ if(!$stmt){
 
 // 3️⃣ Exécuter la requête
 if(!mysqli_stmt_execute($stmt)){
-  die("Erreur d'exécution : " . mysqli_stmt_error($stmt))
+  die("Erreur d'exécution : " . mysqli_stmt_error($stmt));
 }
 
 // 4️⃣ Récupérer le résultat
@@ -50,6 +50,8 @@ mysqli_close($connexion_db);
 <head>
     <meta charset="UTF-8">
     <title>Administration</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+
 </head>
 <body>
     <h1>Interface d'administration</h1>
@@ -66,14 +68,15 @@ mysqli_close($connexion_db);
         <tbody>
           <?php foreach($users as $u): ?>
             <tr>
-              <td><?= htmlspecialschars($u["id"]) ?></td>
-              <td><?= htmlspecialschars($u["nom"]) ?></td>
-              <td><?= htmlspecialschars($u["prenom"]) ?></td>
-              <td><?= htmlspecialschars($u["login"]) ?></td>
+              <td><?= htmlspecialchars($u["id"]) ?></td>
+              <td><?= htmlspecialchars($u["nom"]) ?></td>
+              <td><?= htmlspecialchars($u["prenom"]) ?></td>
+              <td><?= htmlspecialchars($u["login"]) ?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
     </table>
+    <br>
     <form action="admin.php" method = "POST">
     <button type="submit" name = "logout">Se déconnecter</button>
     </form>

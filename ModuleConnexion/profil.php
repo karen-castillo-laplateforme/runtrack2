@@ -148,6 +148,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 <head>
     <meta charset="UTF-8">
     <title>Mon profil</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <h1>Modifier mon profil</h1>
