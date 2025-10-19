@@ -18,7 +18,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
       die("La connexion à la BDD a échoué : " . mysqli_connect_error());
     }
 
-    $sql = "SELECT login, password FROM utilisateurs WHERE login = ?";
+    $sql = "SELECT login, password, nom, prenom FROM utilisateurs WHERE login = ?";
 
     $stmt = mysqli_prepare($connexion_db, $sql);
 
@@ -30,7 +30,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
     mysqli_stmt_execute($stmt);
 
-    mysqli_stmt_bind_result($stmt, $db_password, $db_password);
+    mysqli_stmt_bind_result($stmt, $db_login, $db_password, $db_nom, $db_prenom);
     mysqli_stmt_store_result($stmt);
 
     if(mysqli_stmt_num_rows($stmt) === 0){
@@ -41,9 +41,13 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
     mysqli_stmt_fetch($stmt);
     if(password_verify($password, $db_password)){
+      $_SESSION["login"] = $db_login;
+      $_SESSION["prenom"] = $db_prenom;
+      $_SESSION["nom"] = $db_nom;
       header("Location: profil.php");
     } else {
-      $_SESSION["erreur"] = "Mot de passe incorrect"; 
+      $_SESSION["erreur"] = "Mot de passe incorrect";
+      header("Location: connexion.php"); 
       exit;  
     }
 

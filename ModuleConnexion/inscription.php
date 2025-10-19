@@ -72,6 +72,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   }
 
   //Succès
+  session_unset();
+  session_destroy();
   header("Location: connexion.php");
   exit;
 
