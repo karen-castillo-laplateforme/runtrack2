@@ -18,7 +18,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
       die("La connexion à la BDD a échoué : " . mysqli_connect_error());
     }
 
-    $sql = "SELECT login, password, nom, prenom, id FROM utilisateurs WHERE login = ?";
+    $sql = "SELECT login, password, id FROM utilisateurs WHERE login = ?";
 
     $stmt = mysqli_prepare($connexion_db, $sql);
 
@@ -30,7 +30,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
     mysqli_stmt_execute($stmt);
 
-    mysqli_stmt_bind_result($stmt, $db_login, $db_password, $db_nom, $db_prenom, $db_id);
+    mysqli_stmt_bind_result($stmt, $db_login, $db_password, $db_id);
     mysqli_stmt_store_result($stmt);
 
     if(mysqli_stmt_num_rows($stmt) === 0){
@@ -42,20 +42,13 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     mysqli_stmt_fetch($stmt);
     if(password_verify($password, $db_password)){
       $_SESSION["login"] = $db_login;
-      $_SESSION["prenom"] = $db_prenom;
-      $_SESSION["nom"] = $db_nom;
       $_SESSION["id"] = $db_id;
 
-      if($db_login === "admin" && $db_nom === "admin" && $db_prenom === "admin"){
-        header("Location: admin.php");
-        exit;
-      }
-
-        header("Location: profil.php");
-        exit;
+      header("Location: profil.php");
+      exit;
 
     } else {
-      $_SESSION["erreur"] = "Mot de passe incorrect";
+      $_SESSION["erreur"] = "Login et/ou mot de passe incorrect";
       header("Location: connexion.php"); 
       exit;  
     }
@@ -72,22 +65,28 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Connexion</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8">
+  <title>Connexion - Livre d'Or</title>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+    <?php include "includes/header.php" ?>
+  
     <h1>Connexion</h1>
-      <p><?= htmlspecialchars($message_erreur) ?></p>
-    <form action="connexion.php" method="POST">
-        <label>Login :</label>
-        <input type="text" name="login" required><br>
+  
+  <main>
+    <p><?= $message_erreur ?></p>
+    <form class="form-card" action = "connexion.php" method = "POST">
+      <label>Login :</label>
+      <input type="text" name="login" required>
 
-        <label>Mot de passe :</label>
-        <input type="password" name="password" required><br>
+      <label>Mot de passe :</label>
+      <input type="password" name="password" required>
 
-        <button type="submit">Se connecter</button>
+      <button type="submit">Se connecter</button>
     </form>
-    <p>Pas encore inscrit ? <a href="inscription.php">Inscrivez-vous</a></p>
+
+    <p class="redirect">Pas encore inscrit ? <a href="inscription.php">Inscrivez-vous</a></p>
+  </main>
 </body>
 </html>
