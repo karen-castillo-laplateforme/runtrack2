@@ -2,9 +2,9 @@
 session_start();
 $message_erreur = "";
 
-if(isset($_SESSION["erreur"])){
-  $message_erreur= $_SESSION["erreur"];
-  unset($_SESSION["erreur"]);
+if(isset($_SESSION["erreur_login"])){
+  $message_erreur= $_SESSION["erreur_login"];
+  unset($_SESSION["erreur_login"]);
 }
 
 if($_SERVER["REQUEST_METHOD"] === "POST"){
@@ -12,7 +12,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     $login = trim($_POST["login"]);
     $password = $_POST["password"];
 
-    $connexion_db = mysqli_connect('localhost', 'root', '', 'moduleconnexion');
+    $connexion_db = mysqli_connect('localhost', 'root', '', 'livreor2');
 
     if(!$connexion_db){
       die("La connexion à la BDD a échoué : " . mysqli_connect_error());
@@ -22,8 +22,8 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
     $stmt = mysqli_prepare($connexion_db, $sql);
 
-    if($stmt === false){
-      die("Préparation de la requête impossible : " . mysqli_error($connexion_db));
+    if(!$stmt){
+      die("Erreur préparation requête : " . mysqli_error($connexion_db));
     }
 
     mysqli_stmt_bind_param($stmt, "s", $login);
@@ -34,30 +34,30 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     mysqli_stmt_store_result($stmt);
 
     if(mysqli_stmt_num_rows($stmt) === 0){
-        $_SESSION["erreur"] = "Login introuvable";
+        $_SESSION["erreur_login"] = "Login introuvable";
         header("Location: connexion.php");
         exit;
     }
 
     mysqli_stmt_fetch($stmt);
+
     if(password_verify($password, $db_password)){
       $_SESSION["login"] = $db_login;
       $_SESSION["id"] = $db_id;
+      $_SESSION["isConnected"] = true;
 
       header("Location: profil.php");
       exit;
 
     } else {
-      $_SESSION["erreur"] = "Login et/ou mot de passe incorrect";
+      $_SESSION["erreur_login"] = "Login et/ou mot de passe incorrect";
       header("Location: connexion.php"); 
       exit;  
     }
-
     mysqli_stmt_close($stmt);
     mysqli_close($connexion_db);
-
   } else {
-    $_SESSION["erreur"] = "Login et/ou mot de passe introuvable";
+    $_SESSION["erreur_login"] = "Login et/ou mot de passe introuvable";
   }
 }
 ?>
@@ -88,5 +88,6 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
     <p class="redirect">Pas encore inscrit ? <a href="inscription.php">Inscrivez-vous</a></p>
   </main>
+  <?php include "includes/footer.php" ?>
 </body>
 </html>

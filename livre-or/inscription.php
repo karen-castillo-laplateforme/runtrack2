@@ -4,7 +4,7 @@ $message_erreur = "";
 
 if(isset($_SESSION["erreur"])){
   $message_erreur = $_SESSION["erreur"];
-  unset($_SESSION);
+  unset($_SESSION["erreur"]);
 }
 
 if($_SERVER["REQUEST_METHOD"] === "POST"){
@@ -90,5 +90,6 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
     <p class="redirect">Déjà inscrit ? <a href="connexion.php">Connectez-vous</a></p>
   </main>
+  <?php include "includes/footer.php" ?>
 </body>
 </html>
