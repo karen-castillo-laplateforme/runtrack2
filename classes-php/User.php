@@ -174,10 +174,56 @@ class User {
       session_destroy();
 
       return true;
-      
+
       } catch(Exception $e){
       error_log("Erreur de suppression utilisateur : " . $e->getMessage());
       return false; 
+    } finally {
+      if ($stmt) mysqli_stmt_close($stmt);
+      if ($connexion_db) mysqli_close($connexion_db);
+    }
+    
+  }
+
+  public function update(string $login, string $password, string $email, string $firstname, string $lastname): bool{
+
+    try{
+      $connexion_db = $this->connexion_db();
+
+      $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+      $sql = "UPDATE utilisateurs
+      SET
+      login = ?,
+      password = ?,
+      email = ?,
+      firstname = ?,
+      lastname = ?
+      WHERE id = ? 
+      ";
+
+      $stmt = mysqli_prepare($connexion_db, $sql);
+
+      if (!$stmt) {
+      throw new Exception("Erreur préparation requête : " . mysqli_error($connexion_db));
+    }
+
+      mysqli_stmt_bind_param($stmt, "sssssi", $login, $hashed_password, $email, $firstname, $lastname,   $this->id);
+
+      if (!mysqli_stmt_execute($stmt)) {
+        throw new Exception("Erreur lors de la mise à jour : " . mysqli_stmt_error($stmt));
+        }
+
+        $this->login = $login;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
+        $this->email = $email;
+
+        return true;
+        
+    } catch(Exception $e ) {
+      error_log("L'update n'a pas abouti : " . $e->getMessage());
+      return false;
     } finally {
       if ($stmt) mysqli_stmt_close($stmt);
       if ($connexion_db) mysqli_close($connexion_db);
