@@ -1,12 +1,15 @@
 <?php
-session_start();
 //Gestion logout
   if(isset($_POST["logout"])){
-    session_unset();
+    // session_start();
+session_unset();
     session_destroy();
     header("Location: index.php");
     exit;
   } 
+  else{
+
+  }
 ?>
 <header>
     <h1>Bienvenue sur notre Livre d'Or</h1>
