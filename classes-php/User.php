@@ -111,6 +111,11 @@ class User {
       $this->lastname = $user["lastname"];
 
       echo "Connexion réussie";
+      if(session_status() === PHP_SESSION_NONE){
+        session_start();
+      }
+      $_SESSION["isConnected"] = true;
+      $_SESSION["user_id"] = $this->id;
       return true;
     } else {
       echo "Connexion échouée";
@@ -138,6 +143,7 @@ class User {
       session_start();
     }
 
+    unset($_SESSION["isConnected"], $_SESSION["user_id"]);
     $_SESSION = [];
     session_destroy();
   }
@@ -220,7 +226,7 @@ class User {
         $this->email = $email;
 
         return true;
-        
+
     } catch(Exception $e ) {
       error_log("L'update n'a pas abouti : " . $e->getMessage());
       return false;
@@ -230,6 +236,217 @@ class User {
     }
     
   }
+
+  public function isConnected(): bool{
+    if(session_status() === PHP_SESSION_NONE){
+        session_start();
+    }
+      return isset($_SESSION["isConnected"]) && $_SESSION["isConnected"]=== true;
+      
+  }
+
+  public function getAllInfos(){
+    $stmt = null;
+    try{
+
+      if ($this->id === null) {
+       throw new Exception("Impossible de récupérer les informations : aucun utilisateur connecté.");
+      }
+  
+      $connexion_db = $this->connexion_db();
+
+      $sql = "SELECT * FROM utilisateurs WHERE id = ?";
+
+      $stmt = mysqli_prepare($connexion_db, $sql);
+
+      if(!$stmt){
+        throw new Exception ("Erreur préparation requête : " . mysqli_error($connexion_db));
+      }
+
+      mysqli_stmt_bind_param($stmt, "i", $this->id);
+
+      mysqli_stmt_execute($stmt);
+
+      $result = mysqli_stmt_get_result($stmt);
+      $user = mysqli_fetch_assoc($result);
+
+      if(!$user){
+        return false;
+      }
+
+      return $user;
+
+      }catch(Exception $e){
+      error_log("Erreur de suppression utilisateur : " . $e->getMessage());
+      return false; 
+      } finally {
+      if ($stmt) mysqli_stmt_close($stmt);
+      if ($connexion_db) mysqli_close($connexion_db);
+      }
+
+  }
+
+  public function getLogin(): string|false {
+    $connexion_db = null;
+    $stmt = null;
+    try{
+
+      if ($this->id === null) {
+       throw new Exception("Impossible de récupérer les informations : aucun utilisateur connecté.");
+      }
+  
+      $connexion_db = $this->connexion_db();
+
+      $sql = "SELECT login FROM utilisateurs WHERE id = ?";
+
+      $stmt = mysqli_prepare($connexion_db, $sql);
+
+      if(!$stmt){
+        throw new Exception ("Erreur préparation requête : " . mysqli_error($connexion_db));
+      }
+
+      mysqli_stmt_bind_param($stmt, "i", $this->id);
+
+      mysqli_stmt_execute($stmt);
+
+      $result = mysqli_stmt_get_result($stmt);
+      $user = mysqli_fetch_assoc($result);
+
+      if ($user && isset($user['login'])) {
+        return $user['login'];
+      } else {
+        return false;
+      }
+
+      }catch(Exception $e){
+      error_log("Erreur de suppression utilisateur : " . $e->getMessage());
+      return false; 
+      } finally {
+      if ($stmt) mysqli_stmt_close($stmt);
+      if ($connexion_db) mysqli_close($connexion_db);
+      }
+  }
+
+  public function getEmail(): string|false{
+    $connexion_db = null;
+    $stmt = null;
+    try{
+      if ($this->id === null) {
+       throw new Exception("Impossible de récupérer les informations : aucun utilisateur connecté.");
+      }
+  
+      $connexion_db = $this->connexion_db();
+
+      $sql = "SELECT email FROM utilisateurs WHERE id = ?";
+
+      $stmt = mysqli_prepare($connexion_db, $sql);
+
+      if(!$stmt){
+        throw new Exception ("Erreur préparation requête : " . mysqli_error($connexion_db));
+      }
+
+      mysqli_stmt_bind_param($stmt, "i", $this->id);
+
+      mysqli_stmt_execute($stmt);
+
+      $result = mysqli_stmt_get_result($stmt);
+      $user = mysqli_fetch_assoc($result);
+
+      if ($user && isset($user['email'])) {
+        return $user['email'];
+      } else {
+        return false;
+      }
+
+      }catch(Exception $e){
+      error_log("Erreur de suppression utilisateur : " . $e->getMessage());
+      return false; 
+      } finally {
+      if ($stmt) mysqli_stmt_close($stmt);
+      if ($connexion_db) mysqli_close($connexion_db);
+      }
+  }
+
+  public function getFirstname(): string|false {
+    $connexion_db = null;
+    $stmt = null;
+    try{
+      if ($this->id === null) {
+       throw new Exception("Impossible de récupérer les informations : aucun utilisateur connecté.");
+      }
+  
+      $connexion_db = $this->connexion_db();
+
+      $sql = "SELECT firstname FROM utilisateurs WHERE id = ?";
+
+      $stmt = mysqli_prepare($connexion_db, $sql);
+
+      if(!$stmt){
+        throw new Exception ("Erreur préparation requête : " . mysqli_error($connexion_db));
+      }
+
+      mysqli_stmt_bind_param($stmt, "i", $this->id);
+
+      mysqli_stmt_execute($stmt);
+
+      $result = mysqli_stmt_get_result($stmt);
+      $user = mysqli_fetch_assoc($result);
+
+      if ($user && isset($user['firstname'])) {
+        return $user['firstname'];
+      } else {
+        return false;
+      }
+
+      }catch(Exception $e){
+      error_log("Erreur de suppression utilisateur : " . $e->getMessage());
+      return false; 
+      } finally {
+      if ($stmt) mysqli_stmt_close($stmt);
+      if ($connexion_db) mysqli_close($connexion_db);
+      }
+  }
+
+  public function getLastname(): string|false {
+    $connexion_db = null;
+    $stmt = null;
+    try{
+      if ($this->id === null) {
+       throw new Exception("Impossible de récupérer les informations : aucun utilisateur connecté.");
+      }
+  
+      $connexion_db = $this->connexion_db();
+
+      $sql = "SELECT lastname FROM utilisateurs WHERE id = ?";
+
+      $stmt = mysqli_prepare($connexion_db, $sql);
+
+      if(!$stmt){
+        throw new Exception ("Erreur préparation requête : " . mysqli_error($connexion_db));
+      }
+
+      mysqli_stmt_bind_param($stmt, "i", $this->id);
+
+      mysqli_stmt_execute($stmt);
+
+      $result = mysqli_stmt_get_result($stmt);
+      $user = mysqli_fetch_assoc($result);
+
+      if ($user && isset($user['lastname'])) {
+        return $user['lastname'];
+      } else {
+        return false;
+      }
+
+      }catch(Exception $e){
+      error_log("Erreur de suppression utilisateur : " . $e->getMessage());
+      return false; 
+      } finally {
+      if ($stmt) mysqli_stmt_close($stmt);
+      if ($connexion_db) mysqli_close($connexion_db);
+      }
+  }
+
 }
 
 $user = new User("Renkus", "test@gmail.com", "Karen", "Castillo");
